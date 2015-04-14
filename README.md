@@ -46,8 +46,8 @@ Here is the first basic program:
 
     public class Demo {
       public static void main(String[] args) {
-		    XD.source(Sources.time()).sink(Sinks.log()).deploy();
-		  }
+        XD.source(Sources.time()).sink(Sinks.log()).deploy();
+      }
     }
 
 This will deploy a stream that does `'time | log'`, producing this kind of output in XD:
@@ -56,8 +56,10 @@ This will deploy a stream that does `'time | log'`, producing this kind of outpu
 
 Something more sophisticated:
 
-    DeployableStream s = XD.source(Sources.time("HH:mm:ss")).process(Processors.transform("payload.substring(6)")).sink(
-      Sinks.log());
+    DeployableStream s = 
+      XD.source(Sources.time("HH:mm:ss")).
+      process(Processors.transform("payload.substring(6)")).
+      sink(Sinks.log());
     s.deploy();
 
 Here we are passing a format option to the `time` source and an expression to the `transform` processor.
@@ -66,8 +68,10 @@ Here we are passing a format option to the `time` source and an expression to th
 
 Let's rewrite the previous example, using a Java lambda construct:
 
-    DeployableStream s = XD.source(Sources.time("HH:mm:ss")).process(payload -> payload.substring(6)).sink(
-      Sinks.log());
+    DeployableStream s = 
+      XD.source(Sources.time("HH:mm:ss")).
+      process(payload -> payload.substring(6)).
+      sink(Sinks.log());
     s.deploy();
 
 Alternatively let's use some RX java:
