@@ -252,7 +252,13 @@ public class StreamStep<T> {
 		//		System.out.println("  uploading processor: name = " + processorName + ", customized module size = "
 		//				+ customizedModule.length + "bytes");
 		//		return XDRestClient.moduleUpload(processorName, "/tmp/code-1.jar", "processor");
-		return XDRestClient.moduleUpload(processorName, customizedModule, "processor");
+		boolean result = XDRestClient.moduleUpload(processorName, customizedModule, "processor");
+		try {
+			Thread.sleep(1000);
+		}
+		catch (Exception e) {
+		}
+		return result;
 	}
 
 	public void deploy() {
