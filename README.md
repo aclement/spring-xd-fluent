@@ -74,7 +74,7 @@ Let's rewrite the previous example, using a Java lambda construct:
       sink(Sinks.log());
     s.deploy();
 
-Alternatively let's use some RX java:
+Alternatively let's use some RxJava:
 
     DeployableStream s = XD.source(Sources.time("HH:MM:ss")).
       process(time -> "{\"time\":\"" + time + "\"}"). // make it json
@@ -96,4 +96,4 @@ It is early (early!) days. Only a small number of sources/sinks/processors are i
 
 ## How does it work
 
-The interesting part is when using lambdas or rx flows. Basically spring-xd-fluent will generate XD modules on the fly that embed the code expressed as a lambda or rx flow, it then registers these modules dynamically as part of the `deploy()` operation before it deploys the stream.  Keep in mind that currently the prototype tidies up after itself (so when you run `deploy()` again it will delete anything it created previously).
+The interesting part is when using lambdas or Rx flows. Basically spring-xd-fluent will generate XD modules on the fly that embed the code expressed as a lambda or Rx flow, it then registers these modules dynamically as part of the `deploy()` operation before it deploys the stream.  Keep in mind that currently the prototype tidies up after itself (so when you run `deploy()` again it will delete anything it created previously).
