@@ -5,11 +5,11 @@ This project represent some experiments with fluent API programming of XD.
 
 ## Build it
 
-After cloning, simply run `mvn install` to create you `spring-xd-fluent 0.0.1.BUILD-SNAPSHOT` and install it in your local repo.
+After cloning, simply run `mvn install` to create a `spring-xd-fluent 0.0.1.BUILD-SNAPSHOT` and install it in your local repo.
 
 ## Using it
 
-Create a simple project with pom, add a dependency on `spring-xd-fluent`:
+Create a simple project with pom, add a dependency on `spring-xd-fluent`. Here is a simple pom:
 
     <?xml version="1.0" encoding="UTF-8"?>
     <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -36,7 +36,7 @@ Create a simple project with pom, add a dependency on `spring-xd-fluent`:
       </dependencies>
     </project>
 
-The only requirement for running any code you write is that you have XD running. The easiest way to do that is run XD single node. Spring-XD-Fluent uses the XD REST API to communicate with that running XD.
+The only requirement for running any code you develop is that you have XD running. The easiest way to do that is run XD single node. Spring-XD-Fluent uses the XD REST API to communicate with that running XD.
 
 Here is the first basic program:
 
