@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-xd-fluent</artifactId>
+    <version>0.0.1.BUILD-SNAPSHOT</version>
+<properties>
+<java.version>1.8</java.version>
+
+                <maven.compiler.source>${java.version}</maven.compiler.source>
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+                <maven.compiler.target>${java.version}</maven.compiler.target>
+
+</properties>
+
+<build>
+  <resources>
+    <resource>
+      <directory>${basedir}/codemodules/rx-processor/target</directory>
+      <includes>
+         <include>**/*-1.0.0.BUILD-SNAPSHOT.jar</include>
+      </includes>
+      <targetPath>codemodules</targetPath>
+     </resource>
+    <resource>
+      <directory>${basedir}/codemodules/lambda-processor/target</directory>
+      <includes>
+         <include>**/*-1.0.0.BUILD-SNAPSHOT.jar</include>
+      </includes>
+      <targetPath>codemodules</targetPath>
+     </resource>
+  </resources>
+</build>
+
+
+    <dependencies>
+		<dependency>
+		    <groupId>org.ow2.asm</groupId>
+		    <artifactId>asm</artifactId>
+		    <version>5.0.3</version>
+		</dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+	    <version>4.0.0.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.hateoas</groupId>
+            <artifactId>spring-hateoas</artifactId>
+	    <version>0.17.0.RELEASE</version>
+        </dependency>
+        <dependency>
+			<groupId>org.springframework.xd</groupId>
+			<artifactId>spring-xd-rest-client</artifactId>
+			<version>1.0.4.RELEASE</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.xd.</groupId>
+			<artifactId>spring-xd-rxjava</artifactId>
+			<version>1.1.0.BUILD-SNAPSHOT</version>
+		</dependency>
+<dependency>
+    <groupId>org.springframework.xd</groupId>
+    <artifactId>spring-xd-tuple</artifactId>
+    <version>1.0.4.RELEASE</version>
+</dependency>
+
+		<dependency>
+		  <groupId>io.reactivex</groupId>
+		  <artifactId>rxjava</artifactId>
+		  <version>1.0.0</version>
+		</dependency>
+    	<dependency>
+    		<groupId>junit</groupId>
+    		<artifactId>junit</artifactId>
+    		<version>4.11</version>
+    		<scope>test</scope>
+    	</dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>spring-releases</id>
+            <url>https://repo.spring.io/libs-release</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-releases</id>
+            <url>https://repo.spring.io/libs-release</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+</project>

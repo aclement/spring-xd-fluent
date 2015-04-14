@@ -1,0 +1,135 @@
+// XD Shell 1.1.0.RELEASE log opened at 2015-04-02 13:53:47
+module upload --file /Users/aclement/workspaces/xdplay/code-processor/target/tweet-transformer-1.0.0.BUILD-SNAPSHOT.jar --name foobar --type processor
+// [failed] module upload --file /Users/aclement/workspaces/xdplay/code-processor/target/tweet-transformer-1.0.0.BUILD-SNAPSHOT.jar --name foobar --type processor
+module delete processor:foobar
+module upload --file /Users/aclement/workspaces/xdplay/code-processor/target/tweet-transformer-1.0.0.BUILD-SNAPSHOT.jar --name foobar --type processor
+// [failed] module upload --file /tmp/foo.jar --name foobar --type processor
+// [failed] module delete processor:foobar
+// [failed] module upload --file /tmp/foo.jar --name foobar --type processor
+// [failed] stream destroy stream:asdf
+// [failed] stream destroy asfd
+stream destroy asdf
+// [failed] module upload --file /tmp/foo.jar --name foobar --type processor
+module delete processor:foobar
+module upload --file /tmp/foo.jar --name foobar --type processor
+// [failed] module upload --file /tmp/foo.jar --name foobar --type processor
+module delete processor:foobar
+module upload --file /tmp/foo.jar --name foobar --type processor
+module delete processor:foobar
+module upload --file /Users/aclement/workspaces/xdplay/code-processor/target/code-processor-1.0.0.BUILD-SNAPSHOT.jar --name foobar --type processor
+stream create --name asdf --definition "time | foobar | log"
+stream deploy --name asdf 
+stream undeploy --name asdf 
+// [failed] module delete processor:foobar
+// [failed] module delete processor:foobar
+// [failed] module delete processor:foobar
+stream destroy asdf
+module delete processor:foobar
+module upload --file /tmp/foo.jar --name foobar --type processor
+stream create --name asdf --definition "time | foobar | file"
+stream deploy --name asdf
+stream undeploy --name asdf
+// [failed] stream destroy --name asf
+stream destroy --name asdf
+module delete processor:foobar
+module upload --file /tmp/foo.jar --name foobar --type processor
+stream create --name asdf --definition "time | foobar | file"
+stream deploy --name asdf
+// [failed] stream list
+// [failed] stream list
+// [failed] stream list
+// [failed] stream list
+// [failed] stream list
+// [failed] stream list
+stream list
+module list
+module delete processor:foobar
+// [failed] module delete processor:foobar
+module upload --file /tmp/foo.jar --name foobar --type processor
+stream create --name asdf --definition "time | foobar | file"
+stream deploy --name asdf
+stream undeploy --name asdf 
+stream destroy --name asdf 
+module delete processor:foobar
+module upload --file /tmp/foo.jar --name foobar --type processor
+stream create --name asdf --definition "time | foobar | file"
+stream deploy --name asdf
+stream undeploy --name asdf
+// [failed] module upload --file /tmp/codeandy.jar --name foobar --type processor
+module upload --file /tmp/codeandy.jar --name foobart --type processor
+module delete --name processor:foobart
+module delete --name processor:foobar
+module upload --file /tmp/codeandy.jar --name foobart --type processor
+// [failed] module delete --name processor:foobart
+// [failed] module delete --name processor:foobart
+// [failed] module delete --name processor:foobart
+// [failed] module delete --name processor:foobart
+module delete --name processor:foobart
+module upload --file /tmp/codeandy.jar --name foobart --type processor
+// [failed] module delete --name processor:foobart
+module delete --name processor:foobart
+module upload --file /tmp/codeandy.jar --name foobart --type processor
+module delete --name processor:foobart
+// [failed] module delete --name processor:codeandy
+module upload --file /tmp/codeandy.jar --name codeandy --type processor
+stream list
+stream destroy --name stream311
+module list
+module list
+module list
+stream list
+module list
+module delete --name processor:fib
+module delete --name processor:fib
+module delete --name processor:codeandy
+// [failed] module delete --name processor:fib
+module list
+stream list
+stream destroy --name stream92 
+module delete --name processor:codeandy 
+module list
+stream list
+stream list
+stream destroy --name stream-568
+module list
+module delete --name processor:codeandy
+stream list
+stream destroy stream586
+module list
+stream undeploy --name code-stream-1 
+// [failed] module upload --type source --name rss --file ~/workspaces/xdplay/rss-feed-source/target/rss-feed-source-1.0.0.BUILD-SNAPSHOT.jar
+module upload --type source --name rss --file ~/workspaces/xdplay/rss-feed-source/target/rss-feed-source-1.0.0.BUILD-SNAPSHOT.jar
+module upload --type source --name feed --file ~/workspaces/xdplay/rss-feed-source/target/rss-feed-source-1.0.0.BUILD-SNAPSHOT.jar
+stream create --name foo --definition "feed --url=http://feeds.bbci.co.uk/news/rss.xml | filter --expression=#jsonPath(payload,'$.uri').contains('sport') | log"
+stream deploy --name foo
+stream destroy --name foo
+stream create --name "foo-bar-1" --definition "feed --url=http://feeds.bbci.co.uk/news/rss.xml | filter --expression=#jsonPath(payload,'$.uri').contains('sport') | log"
+stream deploy --name foo-bar-1
+stream destroy --name foo-bar-1 
+stream list
+stream list
+stream destroy --name code-stream-1 
+stream destroy --name code-stream-1 
+stream destroy --name code-stream-1 
+stream destroy --name code-stream-1 
+stream destroy --name code-stream-1 
+module list
+stream destroy --name code-stream-1 
+stream destroy --name code-stream-1 
+module list
+stream list
+stream destroy --name code-stream-1 
+module list
+module delete --name processor:code-1
+module list
+stream list
+clear
+module list
+stream list
+module list
+clear
+module list
+stream list
+clear
+module list
+stream list
