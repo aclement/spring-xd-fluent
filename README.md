@@ -76,17 +76,17 @@ Let's rewrite the previous example, using a Java lambda construct:
 
 Alternatively let's use some RX java:
 
-  DeployableStream s = XD.source(Sources.time("HH:MM:ss")).
-    process(time -> "{\"time\":\"" + time + "\"}"). // make it json
-    process(Processors.jsonToTuple()).
-    processrx(inputStream -> 
-      inputStream.map(tuple -> {
-        return tuple.getValue("time").toString();
-      }).
-      buffer(5).
-      map(data -> tuple().of("time", data.get(0)))).
-      sink(Sinks.log());
-  s.deploy();
+    DeployableStream s = XD.source(Sources.time("HH:MM:ss")).
+      process(time -> "{\"time\":\"" + time + "\"}"). // make it json
+      process(Processors.jsonToTuple()).
+      processrx(inputStream -> 
+        inputStream.map(tuple -> {
+          return tuple.getValue("time").toString();
+        }).
+        buffer(5).
+        map(data -> tuple().of("time", data.get(0)))).
+        sink(Sinks.log());
+    s.deploy();
 
 Surely that is the most efficient way to print the time out every 5 seconds...
 
