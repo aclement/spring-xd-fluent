@@ -26,6 +26,6 @@ import org.springframework.xd.fluent.internal.XDRestClient;
 public class RegisterFeed {
 
 	public static void main(String[] args) {
-		XDRestClient.moduleUpload("feed", "useful/rss-feed-source-1.0.0.BUILD-SNAPSHOT.jar", "source");
+		XDRestClient.getInstance().moduleUpload("feed", "useful/rss-feed-source-1.0.0.BUILD-SNAPSHOT.jar", "source");
 	}
 }

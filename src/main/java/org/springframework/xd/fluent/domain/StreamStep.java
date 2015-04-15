@@ -23,11 +23,8 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.xd.fluent.DeployableStream;
-import org.springframework.xd.fluent.internal.CustomizedModuleGenerator;
-import org.springframework.xd.fluent.internal.XDRestClient;
 
 /**
  * Represents a step in a stream definition. The generic type determines the type of the elements in this step of the
@@ -37,29 +34,6 @@ import org.springframework.xd.fluent.internal.XDRestClient;
  *
  */
 public class StreamStep<T> {
-
-	/**
-	 * Encapsulates the state of a stream and accumulates information as stream steps occur.
-	 */
-	static class StreamState {
-
-		private String name;
-
-		private Source<?> source;
-
-		private List<Processor<?, ?>> processors;
-
-		private Sink<?> sink;
-
-		// TODO deployable when sink is added
-		private boolean isDeployable = false;
-
-		private boolean isCreated = false;
-
-		private Map<String, List<Resource>> resourcesToPackagePerModule;
-
-		private boolean usesCodeModules = false;
-	}
 
 	private StreamState state;
 
@@ -172,7 +146,7 @@ public class StreamStep<T> {
 		setSink(sink);
 		state.isDeployable = true;
 		// TODO return something immutable? (from an adding stages point of view)
-		return new DeployableStream(this);
+		return new DeployableStream(this.state);
 	}
 
 	public void setSource(Source source) {
@@ -223,63 +197,6 @@ public class StreamStep<T> {
 			this.state.name = "code-stream-" + Integer.toString(counter++);
 		}
 		return this.state.name;
-	}
-
-	// TODO retval?
-	public void create(boolean deploy) {
-		XDRestClient.createStream(getName(), toDSLString(), deploy);
-	}
-
-	private boolean defineCodeModules() {
-		System.out.println("defining new code modules");
-		for (Processor processor : state.processors) {
-			if (processor instanceof CodeProcessor) {
-				if (!defineCodeModule((CodeProcessor) processor)) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-	private boolean defineCodeModule(CodeProcessor processor) {
-		String processorName = processor.getName();
-		System.out.println("  building custom code processor module: " + processorName);
-		List<Resource> resourcesToPackage = state.resourcesToPackagePerModule.get(processorName);
-		byte[] customizedModule =
-				CustomizedModuleGenerator.generate(processor.getType(), processorName,
-						resourcesToPackage);
-		//		System.out.println("  uploading processor: name = " + processorName + ", customized module size = "
-		//				+ customizedModule.length + "bytes");
-		//		return XDRestClient.moduleUpload(processorName, "/tmp/code-1.jar", "processor");
-		boolean result = XDRestClient.moduleUpload(processorName, customizedModule, "processor");
-		try {
-			Thread.sleep(1000);
-		}
-		catch (Exception e) {
-		}
-		return result;
-	}
-
-	public void deploy() {
-		System.out.println("Preparing to deploy: " + toDSLString());
-		XDRestClient.destroyCodeStreams();
-		if (state.usesCodeModules) {
-			XDRestClient.deleteCodeModules();
-			// Package and upload those modules
-			// TODO deal with sources/sinks
-			if (!defineCodeModules()) {
-				System.out.println("Failed to deploy code modules, exiting");
-				return;
-			}
-		}
-		if (!state.isCreated) {
-			create(true);
-		}
-		if (!state.isDeployable) {
-			throw new UnsupportedOperationException("no way!");
-		}
-
 	}
 
 }

@@ -52,21 +52,22 @@
 	    <version>0.17.0.RELEASE</version>
         </dependency>
         <dependency>
-			<groupId>org.springframework.xd</groupId>
+		<groupId>org.springframework.xd</groupId>
 			<artifactId>spring-xd-rest-client</artifactId>
-			<version>1.0.4.RELEASE</version>
-		</dependency>
+			<version>1.1.1.RELEASE</version>
+		</dependency> 
 		
 		<dependency>
 			<groupId>org.springframework.xd.</groupId>
 			<artifactId>spring-xd-rxjava</artifactId>
 			<version>1.1.1.RELEASE</version>
 		</dependency>
-<dependency>
-    <groupId>org.springframework.xd</groupId>
-    <artifactId>spring-xd-tuple</artifactId>
-    <version>1.0.4.RELEASE</version>
-</dependency>
+		
+		<dependency>
+		    <groupId>org.springframework.xd</groupId>
+		    <artifactId>spring-xd-tuple</artifactId>
+		    <version>1.0.4.RELEASE</version>
+		</dependency>
 
 		<dependency>
 		  <groupId>io.reactivex</groupId>

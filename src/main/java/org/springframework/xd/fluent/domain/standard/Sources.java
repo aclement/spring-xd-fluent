@@ -16,16 +16,18 @@
 
 package org.springframework.xd.fluent.domain.standard;
 
+import org.springframework.xd.fluent.domain.CustomSource;
 import org.springframework.xd.fluent.domain.Source;
 
 /**
  * Source factory.
+ *
  * @author aclement
  *
  */
 public class Sources {
 
-	// TODO Generate the factory contents and the source/sink files via annotation processor
+	// TODO Generate the factory methods and the source/sink files via annotation processor
 	public static Source<String> time() {
 		return new TimeSource();
 	}
@@ -40,6 +42,10 @@ public class Sources {
 		TimeSource source = new TimeSource();
 		source.setOption("format", format);
 		return source;
+	}
+
+	public static <O> Source<O> custom(String name) {
+		return new CustomSource<O>(name);
 	}
 
 }

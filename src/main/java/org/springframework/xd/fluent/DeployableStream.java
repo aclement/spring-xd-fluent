@@ -16,24 +16,99 @@
 
 package org.springframework.xd.fluent;
 
-import org.springframework.xd.fluent.domain.StreamStep;
+import java.util.List;
+
+import org.springframework.xd.fluent.domain.CodeProcessor;
+import org.springframework.xd.fluent.domain.Processor;
+import org.springframework.xd.fluent.domain.Resource;
+import org.springframework.xd.fluent.domain.StreamState;
+import org.springframework.xd.fluent.internal.CustomizedModuleGenerator;
+import org.springframework.xd.fluent.internal.XDRestClient;
 
 /**
  * Represents a deployable stream (a deployable one is a source, then some number of processors, then a sink).
+ *
  * @author aclement
  *
  */
 public class DeployableStream {
 
-	// The final step of stream construction is deployable
-	StreamStep<?> streamStep;
+	// The state passed in the constructor to this type is a well formed stream
+	StreamState streamState;
 
-	public DeployableStream(StreamStep<?> stream) {
-		this.streamStep = stream;
+	XDRestClient xdrc;
+
+	public DeployableStream(StreamState streamState) {
+		this.streamState = streamState;
+		this.xdrc = XDRestClient.getInstance();
 	}
 
 	public void deploy() {
-		this.streamStep.deploy();
+		deploy(null, false);
+	}
+
+	public void deploy(String streamName) {
+		deploy(streamName, false);
+	}
+
+	private static boolean automaticallyTidyUpBeforeDeploy = false;
+
+	/**
+	 * @param streamName the name to use when deploying the stream
+	 * @param replaceExistingStream if true, any existing stream of the same name will be destroyed prior to creating
+	 *            this one
+	 */
+	public void deploy(String streamName, boolean replaceExistingStream) {
+		XDRestClient xdrc = XDRestClient.getInstance();
+		if (replaceExistingStream && streamName != null) {
+			xdrc.streamDestroy(streamName);
+		}
+		if (automaticallyTidyUpBeforeDeploy) {
+			xdrc.destroyCodeStreams();
+			xdrc.deleteCodeModules();
+		}
+		if (streamState.usesCodeModules()) {
+			// Package and upload those modules
+			// TODO deal with sources/sinks
+			if (!defineCodeModules()) {
+				System.out.println("Failed to deploy code modules, exiting");
+				return;
+			}
+		}
+		if (!streamState.isCreated()) {
+			xdrc.streamCreate(streamName, streamState.toDSLString(), true);
+		}
+	}
+
+	private boolean defineCodeModules() {
+		System.out.println("defining new code modules");
+		for (Processor processor : streamState.getProcessors()) {
+			if (processor instanceof CodeProcessor) {
+				if (!defineCodeModule((CodeProcessor) processor)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	private boolean defineCodeModule(CodeProcessor processor) {
+		String processorName = processor.getName();
+		System.out.println("  building custom code processor module: " + processorName);
+		List<Resource> resourcesToPackage = streamState.getResourcesToPackageForModule(processor);
+		byte[] customizedModule =
+				CustomizedModuleGenerator.generate(processor.getType(), processorName,
+						resourcesToPackage);
+		//		System.out.println("  uploading processor: name = " + processorName + ", customized module size = "
+		//				+ customizedModule.length + "bytes");
+		//		return XDRestClient.moduleUpload(processorName, "/tmp/code-1.jar", "processor");
+		boolean result = xdrc.moduleUpload(processorName, customizedModule, "processor");
+		try {
+			Thread.sleep(1000);
+		}
+		catch (Exception e) {
+		}
+		return result;
 	}
 
 }

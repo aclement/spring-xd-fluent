@@ -23,9 +23,9 @@ package org.springframework.xd.fluent.domain;
  * @author aclement
  *
  */
-public class SimpleProcessor<I,O> extends AbstractProcessor<I,O> {
+public class CustomProcessor<I,O> extends AbstractProcessor<I,O> {
 
-	public SimpleProcessor(String name) {
+	public CustomProcessor(String name) {
 		super(name);
 	}
 

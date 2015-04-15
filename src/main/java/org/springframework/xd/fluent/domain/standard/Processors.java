@@ -17,37 +17,46 @@
 package org.springframework.xd.fluent.domain.standard;
 
 import org.springframework.xd.fluent.domain.Processor;
-import org.springframework.xd.fluent.domain.SimpleProcessor;
+import org.springframework.xd.fluent.domain.CustomProcessor;
 import org.springframework.xd.tuple.Tuple;
 
 
 /**
  * Processor factory.
+ *
  * @author aclement
  *
  */
 public class Processors {
 
 	public static Processor<Object, String> transform(String expression) {
-		SimpleProcessor<Object,String> processor = new SimpleProcessor<Object,String>("transform");
+		CustomProcessor<Object, String> processor = new CustomProcessor<Object, String>("transform");
 		processor.setOption("expression", expression);
 		return processor;
 	}
 
+	// TODO not sure the generics are right here...
 	public static Processor<String, String> filter(String expression) {
-		SimpleProcessor processor = new SimpleProcessor("filter");
+		CustomProcessor<String, String> processor = new CustomProcessor<String, String>("filter");
 		processor.setOption("expression", expression);
 		return processor;
 	}
 
 	public static Processor<String, Tuple> jsonToTuple() {
-		SimpleProcessor processor = new SimpleProcessor("json-to-tuple");
+		CustomProcessor processor = new CustomProcessor("json-to-tuple");
 		return processor;
 	}
 
+	/**
+	 * To be used when constructing a processor which has no direct reference method in this factory. (e.g.
+	 * Processor.custom("myProcessorModule"))
+	 */
+	public static <I, O> Processor<I, O> custom(String name) {
+		return new CustomProcessor<I, O>(name);
+	}
 
 	public static Processor test() {
-		SimpleProcessor processor = new SimpleProcessor("test");
+		CustomProcessor processor = new CustomProcessor("test");
 		return processor;
 	}
 }

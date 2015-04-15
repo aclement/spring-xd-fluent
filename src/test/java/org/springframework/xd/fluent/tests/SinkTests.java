@@ -14,14 +14,25 @@
  * limitations under the License.
  */
 
-package org.springframework.xd.fluent.examples;
+package org.springframework.xd.fluent.tests;
 
-import org.springframework.xd.fluent.internal.XDRestClient;
+import static org.junit.Assert.assertEquals;
 
-public class StopStreams {
+import org.junit.Test;
 
-	public static void main(String[] args) {
-		XDRestClient.getInstance().destroyCodeStreams();
-		XDRestClient.getInstance().deleteCodeModules();
+import org.springframework.xd.fluent.domain.Sink;
+import org.springframework.xd.fluent.domain.standard.Sinks;
+
+
+/**
+ *
+ * @author aclement
+ */
+public class SinkTests {
+
+	@Test
+	public void testSinkFactory() {
+		Sink sink = Sinks.custom("foo");
+		assertEquals("foo", sink.getName());
 	}
 }

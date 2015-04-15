@@ -16,10 +16,12 @@
 
 package org.springframework.xd.fluent.domain.standard;
 
+import org.springframework.xd.fluent.domain.CustomSink;
 import org.springframework.xd.fluent.domain.Sink;
 
 /**
  * Sink factory.
+ *
  * @author aclement
  *
  */
@@ -31,5 +33,9 @@ public class Sinks {
 
 	public static Sink<Object> log() {
 		return new LogSink();
+	}
+
+	public static <I> Sink<I> custom(String name) {
+		return new CustomSink<I>(name);
 	}
 }

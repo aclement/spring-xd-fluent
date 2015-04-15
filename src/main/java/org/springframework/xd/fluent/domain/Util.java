@@ -23,7 +23,7 @@ import java.io.InputStream;
 
 /**
  * Common utils.
- * 
+ *
  * @author aclement
  */
 public class Util {
@@ -60,6 +60,15 @@ public class Util {
 		}
 		catch (IOException e) {
 			throw new IllegalStateException(e);
+		}
+	}
+
+	public static void sleep(int ms) {
+		try {
+			Thread.sleep(ms);
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 }

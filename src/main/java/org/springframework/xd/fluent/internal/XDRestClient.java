@@ -24,10 +24,14 @@ import java.util.Collection;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.xd.fluent.domain.Util;
+import org.springframework.xd.rest.client.impl.SpringXDException;
 import org.springframework.xd.rest.client.impl.SpringXDTemplate;
+import org.springframework.xd.rest.domain.DetailedModuleDefinitionResource;
 import org.springframework.xd.rest.domain.ModuleDefinitionResource;
 import org.springframework.xd.rest.domain.RESTModuleType;
 import org.springframework.xd.rest.domain.StreamDefinitionResource;
+
 
 /**
  * Helper methods for calling the XD REST API.
@@ -56,16 +60,35 @@ public class XDRestClient {
 	private XDRestClient() {
 	}
 
-	public static Collection<StreamDefinitionResource> listStreams() {
+	public static XDRestClient getInstance() {
+		return new XDRestClient();
+	}
+
+	public Collection<StreamDefinitionResource> listStreams() {
 		return xdTemplate.streamOperations().list().getContent();
 	}
 
-	public static Collection<ModuleDefinitionResource> listModules() {
+	public Collection<ModuleDefinitionResource> listModules() {
 		PagedResources<ModuleDefinitionResource> o = xdTemplate.moduleOperations().list(null);
 		return o.getContent();
 	}
 
-	public static int destroyCodeStreams() {
+	public boolean streamDestroy(String streamName) {
+		try {
+			xdTemplate.streamOperations().destroy(streamName);
+			return waitOnStreamDisappearance(streamName);
+		}
+		catch (SpringXDException e) {
+			if (e.getMessage().startsWith("There is no stream definition named ")) {
+				return false;
+			}
+			else {
+				throw e;
+			}
+		}
+	}
+
+	public int destroyCodeStreams() {
 		System.out.println("destroying old code streams");
 		int count = 0;
 		Collection<StreamDefinitionResource> streams = listStreams();
@@ -87,7 +110,7 @@ public class XDRestClient {
 		return count;
 	}
 
-	public static int deleteCodeModules() {
+	public int deleteCodeModules() {
 		System.out.println("deleting old code modules");
 		int count = 0;
 		Collection<ModuleDefinitionResource> modules = listModules();
@@ -101,10 +124,10 @@ public class XDRestClient {
 		return count;
 	}
 
-	public static boolean moduleUpload(String moduleName, byte[] moduleContents, String type) {
+	public boolean moduleUpload(String moduleName, byte[] moduleContents, String type) {
 		try {
 			// TODO why on earth can't I use a ByteArrayResource on that API call? (returns server 500)
-			File f = new File("/tmp" + /*System.getProperty("java.io.tmpdir") +*/File.separator
+			File f = new File(System.getProperty("java.io.tmpdir") + File.separator
 					+ "code.jar");
 			FileOutputStream fos = new FileOutputStream(f);
 			fos.write(moduleContents);
@@ -117,11 +140,12 @@ public class XDRestClient {
 		}
 	}
 
-	public static boolean moduleUpload(String moduleName, String modulePath, String type) {
+	public boolean moduleUpload(String moduleName, String modulePath, String type) {
 		try {
 			restTemplate.postForObject(xdUrl + "modules/{type}/{moduleName}", new FileSystemResource(new File(
 					modulePath)),
 					String.class, type, moduleName);
+			waitOnModuleExistence(type, moduleName);
 			return true;
 		}
 		catch (Exception e) {
@@ -130,10 +154,98 @@ public class XDRestClient {
 		}
 	}
 
-	public static boolean createStream(String name, String definition, boolean deploy) {
+	public boolean streamCreate(String name, String definition, boolean deploy) {
 		System.out.println("Creating stream: '" + name + "=" + definition + "' (deploy=" + deploy + ")");
 		xdTemplate.streamOperations().createStream(name, definition, deploy);
+		boolean result = waitOnStreamExistence(name);
 		return true;
+	}
+
+	/**
+	 * @return true if the stream exists
+	 */
+	public boolean streamExists(String streamName) {
+		Collection<StreamDefinitionResource> streams = listStreams();
+		for (StreamDefinitionResource stream : streams) {
+			if (stream.getName().equals(streamName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @return true if the module exists
+	 */
+	public boolean moduleExists(String type, String moduleName) {
+		try {
+			DetailedModuleDefinitionResource dmdr = xdTemplate.moduleOperations().info(moduleName,
+					RESTModuleType.valueOf(type));
+			return true;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * @return true if the stream does not exist
+	 */
+	public boolean streamDoesNotExist(String streamName) {
+		Collection<StreamDefinitionResource> streams = listStreams();
+		for (StreamDefinitionResource stream : streams) {
+			if (stream.getName().equals(streamName)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Waits up to 5 seconds for a stream to appear as available on the server.
+	 */
+	private boolean waitOnStreamExistence(String streamName) {
+		long time = System.currentTimeMillis();
+		while ((System.currentTimeMillis() - time) < 5000) {
+			boolean exists = streamExists(streamName);
+			if (exists) {
+				return true;
+			}
+			Util.sleep(200);
+		}
+		return false;
+	}
+
+
+	/**
+	 * Waits up to 5 seconds for a module to appear as available on the server.
+	 */
+	private boolean waitOnModuleExistence(String type, String moduleName) {
+		long time = System.currentTimeMillis();
+		while ((System.currentTimeMillis() - time) < 5000) {
+			boolean exists = moduleExists(type, moduleName);
+			if (exists) {
+				return true;
+			}
+			Util.sleep(200);
+		}
+		return false;
+	}
+
+	/**
+	 * Waits up to 5 seconds for a stream to disappear from the server.
+	 */
+	private boolean waitOnStreamDisappearance(String streamName) {
+		long time = System.currentTimeMillis();
+		while ((System.currentTimeMillis() - time) < 5000) {
+			boolean exists = streamExists(streamName);
+			if (!exists) {
+				return true;
+			}
+			Util.sleep(200);
+		}
+		return false;
 	}
 
 }

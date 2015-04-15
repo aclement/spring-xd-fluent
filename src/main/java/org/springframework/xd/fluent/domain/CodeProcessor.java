@@ -16,21 +16,24 @@
 
 package org.springframework.xd.fluent.domain;
 
+import java.util.Collection;
+
+import org.springframework.xd.fluent.internal.XDRestClient;
+import org.springframework.xd.rest.domain.ModuleDefinitionResource;
+
 /**
- * A code processor is a processor driven by compiled code, typically either a Java lambda
- * or a piece of rx java stream processing logic.
+ * A code processor is a processor driven by compiled code, typically either a Java lambda or a piece of rx java stream
+ * processing logic.
+ *
  * @author aclement
  *
  */
 public class CodeProcessor extends AbstractProcessor {
 
-	// Crude mechanism for naming code processors
-	private static int counter = 1;
-
 	private CodeProcessorType type;
 
 	public CodeProcessor(byte[] serializedLambda, CodeProcessorType type) {
-		super("code-" + Integer.toString(counter++));
+		super("code-" + CodeProcessor.nextAvailableId());
 		this.type = type;
 	}
 
@@ -38,4 +41,17 @@ public class CodeProcessor extends AbstractProcessor {
 		return this.type;
 	}
 
+	private static int nextAvailableId() {
+		Collection<ModuleDefinitionResource> modules = XDRestClient.getInstance().listModules();
+		int highestFound = -1;
+		for (ModuleDefinitionResource mdr : modules) {
+			if (mdr.getName().startsWith("code-")) {
+				int number = Integer.parseInt(mdr.getName().substring(5));
+				if (number > highestFound) {
+					number = highestFound;
+				}
+			}
+		}
+		return highestFound++;
+	}
 }

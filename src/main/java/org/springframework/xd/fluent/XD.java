@@ -18,18 +18,32 @@ package org.springframework.xd.fluent;
 
 import org.springframework.xd.fluent.domain.Source;
 import org.springframework.xd.fluent.domain.StreamStep;
+import org.springframework.xd.fluent.internal.XDRestClient;
 
 /**
  * Entry point to the fluent API for creating streams.
+ *
  * @author aclement
  *
  */
 public class XD {
 
+	/**
+	 * Begin a new stream with a source.
+	 */
 	public static <T> StreamStep<T> source(Source<T> source) {
-		StreamStep<T> stream = StreamStep.<T>newStream();
+		StreamStep<T> stream = StreamStep.<T> newStream();
 		stream.setSource(source);
 		return stream;
+	}
+
+	/**
+	 * Delete all 'code' related streams and modules on the target XD instance.
+	 */
+	public static void cleanup() {
+		XDRestClient xdrc = XDRestClient.getInstance();
+		xdrc.deleteCodeModules();
+		xdrc.destroyCodeStreams();
 	}
 
 }

@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package org.springframework.xd.fluent.examples;
+package org.springframework.xd.fluent.domain;
 
-import org.springframework.xd.fluent.internal.XDRestClient;
 
-public class StopStreams {
+/**
+ * Used for sources that have no direct built in support.
+ *
+ * @author aclement
+ *
+ */
+public class CustomSink<O> extends AbstractSink<O> {
 
-	public static void main(String[] args) {
-		XDRestClient.getInstance().destroyCodeStreams();
-		XDRestClient.getInstance().deleteCodeModules();
+	public CustomSink(String name) {
+		super(name);
 	}
+
 }

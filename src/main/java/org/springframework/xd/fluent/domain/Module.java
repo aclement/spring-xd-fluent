@@ -18,10 +18,12 @@ package org.springframework.xd.fluent.domain;
 
 /**
  * Basic representation of a module.
- * 
+ *
  * @author aclement
  */
 public interface Module<I, O> {
+
+	String getName();
 
 	String toDSLString();
 }
