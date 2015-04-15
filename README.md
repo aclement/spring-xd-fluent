@@ -97,3 +97,11 @@ It is early (early!) days. Only a small number of sources/sinks/processors are i
 ## How does it work
 
 The interesting part is when using lambdas or Rx flows. Basically spring-xd-fluent will generate XD modules on the fly that embed the code expressed as a lambda or Rx flow, it then registers these modules dynamically as part of the `deploy()` operation before it deploys the stream.  Keep in mind that currently the prototype tidies up after itself (so when you run `deploy()` again it will delete anything it created previously).
+
+## FAQ
+
+Q. Can I name a stream?
+A. Not at the moment. Streams created via this API are given a special name so we can reliably find them again and delete them (same as code based modules).
+
+Q. If it tidies up every time I deploy, how do I create two streams with this?
+A. You can't right now, this is for experimenting with single streams. This restriction will be lifted very soon.
