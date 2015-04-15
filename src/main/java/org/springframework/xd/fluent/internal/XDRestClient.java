@@ -104,7 +104,7 @@ public class XDRestClient {
 	public static boolean moduleUpload(String moduleName, byte[] moduleContents, String type) {
 		try {
 			// TODO why on earth can't I use a ByteArrayResource on that API call? (returns server 500)
-			File f = new File("/tmp" + /*System.getProperty("java.io.tmpdir") +*/File.separator
+			File f = new File(System.getProperty("java.io.tmpdir") + File.separator
 					+ "code.jar");
 			FileOutputStream fos = new FileOutputStream(f);
 			fos.write(moduleContents);
