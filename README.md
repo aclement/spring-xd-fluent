@@ -1,11 +1,11 @@
-Spring XD Fluent
-================
+Spring XD Java DSL
+==================
 
 This project represent some experiments with fluent API programming of XD.
 
 ## Build it
 
-After cloning, simply run `mvn install` to create a `spring-xd-fluent 0.0.1.BUILD-SNAPSHOT` and install it in your local repo.
+After cloning, simply run `mvn install` to create a `spring-xd-java-dsl 0.0.1.BUILD-SNAPSHOT` and install it in your local repo.
 
 ## Using it
 
@@ -30,7 +30,7 @@ Create a simple project with pom, add a dependency on `spring-xd-fluent`. Here i
       <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-xd-fluent</artifactId>
+            <artifactId>spring-xd-java-dsl</artifactId>
             <version>0.0.1.BUILD-SNAPSHOT</version>
         </dependency>
       </dependencies>
@@ -46,9 +46,12 @@ Here is the first basic program:
 
     public class Demo {
       public static void main(String[] args) {
-        XD.source(Sources.time()).sink(Sinks.log()).deploy();
+        XD.source(Sources.time()).sink(Sinks.log()).deploy("teststream",true);
       }
     }
+
+The boolean parameter to `deploy()` specifies that you want this new stream
+to replace any currently defined with that name.
 
 This will deploy a stream that does `'time | log'`, producing this kind of output in XD:
 
@@ -60,7 +63,7 @@ Something more sophisticated:
       XD.source(Sources.time("HH:mm:ss")).
       process(Processors.transform("payload.substring(6)")).
       sink(Sinks.log());
-    s.deploy();
+    s.deploy("teststream",true);
 
 Here we are passing a format option to the `time` source and an expression to the `transform` processor.
 
@@ -72,21 +75,21 @@ Let's rewrite the previous example, using a Java lambda construct:
       XD.source(Sources.time("HH:mm:ss")).
       process(payload -> payload.substring(6)).
       sink(Sinks.log());
-    s.deploy();
+    s.deploy("mystream",true);
 
 Alternatively let's use some RxJava:
 
     DeployableStream s = XD.source(Sources.time("HH:MM:ss")).
       process(time -> "{\"time\":\"" + time + "\"}"). // make it json
       process(Processors.jsonToTuple()).
-      processrx(inputStream -> 
+      processRx(inputStream -> 
         inputStream.map(tuple -> {
           return tuple.getValue("time").toString();
         }).
         buffer(5).
         map(data -> tuple().of("time", data.get(0)))).
         sink(Sinks.log());
-    s.deploy();
+    s.deploy("mystream",true);
 
 Surely that is the most efficient way to print the time out every 5 seconds...
 
@@ -96,12 +99,7 @@ It is early (early!) days. Only a small number of sources/sinks/processors are i
 
 ## How does it work
 
-The interesting part is when using lambdas or Rx flows. Basically spring-xd-fluent will generate XD modules on the fly that embed the code expressed as a lambda or Rx flow, it then registers these modules dynamically as part of the `deploy()` operation before it deploys the stream.  Keep in mind that currently the prototype tidies up after itself (so when you run `deploy()` again it will delete anything it created previously).
+The interesting part is when using lambdas or Rx flows. Basically the code will generate XD modules on the fly that embed the code expressed as a lambda or Rx flow, it then registers these modules dynamically as part of the `deploy()` operation before it deploys the stream.
 
 ## FAQ
 
-Q. Can I name a stream?
-A. Not at the moment. Streams created via this API are given a special name so we can reliably find them again and delete them (same as code based modules).
-
-Q. If it tidies up every time I deploy, how do I create two streams with this?
-A. You can't right now, this is for experimenting with single streams. This restriction will be lifted very soon.
