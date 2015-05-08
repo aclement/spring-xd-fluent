@@ -3,11 +3,12 @@ package org.springframework.xd.code;
 public class Code extends CodeDrivenProcessor {
 
 	public Code() {
-		super("lambda.ser");
+		super();
+	}
+
+	@SuppressWarnings("unchecked")
+	public Integer transform(Integer input) {
+		return (Integer)fn.apply(input);
 	}
 	
-	public static void main(String[] args) {
-		String output = new Code().transform("foobar");
-		System.out.println(output);
-	}
 }

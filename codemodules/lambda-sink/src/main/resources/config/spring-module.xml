@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration
+		http://www.springframework.org/schema/integration/spring-integration.xsd">
+
+    <int:channel id="input"/>
+
+	<bean id="throughputMessageHandler" class="org.springframework.xd.throughput.ThroughputMessageHandler">
+		<property name="reportEveryMs" value="${reportEveryMs}" />
+		<property name="timeUnit" value="${timeUnit}" />
+		<property name="logger" value="${logger}" />
+	</bean>
+
+	<int:service-activator input-channel="input" auto-startup="false" ref="throughputMessageHandler"/>
+
+</beans>

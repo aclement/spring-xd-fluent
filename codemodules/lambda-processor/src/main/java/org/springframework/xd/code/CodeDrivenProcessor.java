@@ -14,31 +14,26 @@
  */
 package org.springframework.xd.code;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.function.Function;
 
 import org.springframework.integration.annotation.MessageEndpoint;
-import org.springframework.integration.annotation.Transformer;
-import org.springframework.xd.tuple.Tuple;
 
 /**
  * @author Andy Clement
  */
 @MessageEndpoint
+@SuppressWarnings("rawtypes")
 public abstract class CodeDrivenProcessor {
 
 	protected Function fn;
 	
-	public CodeDrivenProcessor(String resource) {
-		// 1. load the resource
-		// 2. deserialize the lambda
+	public CodeDrivenProcessor() {
 		try {
 //			InputStream is = new FileInputStream(new File("/tmp/bytes"));//
-			InputStream is = this.getClass().getClassLoader().getResourceAsStream(resource);
+			InputStream is = this.getClass().getClassLoader().getResourceAsStream("lambda.ser");
 			ObjectInputStream ois = new ObjectInputStream(is);
 			fn = (Function)ois.readObject();
 			ois.close();
@@ -47,21 +42,6 @@ public abstract class CodeDrivenProcessor {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	
-	@Transformer(inputChannel = "input", outputChannel = "output")
-	public String transformDriver(String payload) {
-		return transform(payload);
-	}
-
-	@Transformer(inputChannel = "input", outputChannel = "output")
-	public String transformDriver(Tuple payload) {
-		return (String)fn.apply(payload);
-	}
-
-	String transform(String input) { // TODO Object/Object? not string?
-		return (String)fn.apply(input);
 	}
 
 }
